@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors'
 import {prisma} from '../lib/prisma.js'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export async function register(req, res, next) {
   const {username, nickname, password} = req.body
@@ -32,8 +33,37 @@ export async function register(req, res, next) {
   res.json( { message : 'User created..', user : newUser} )
 }
 
-export function login(req, res) {
-  res.json('Login service')
+export async function login(req, res, next) {
+  const {username, password} = req.body
+  // validation
+  if(!username.trim() || !password.trim()) {
+    return next(createHttpError[400]('username and password are required'))
+  }
+  // check ว่ามี user นี้ไหม
+  const userExist = await prisma.user.findFirst({
+    where : { username : username }
+  })
+  if(!userExist) {
+    return next(createHttpError[401]('Invalid login 1'))
+  }
+  // check password 
+  const pwOk = await bcrypt.compare(password, userExist.password)
+  if(!pwOk) {
+    return next(createHttpError[401]('Invalid login 2'))
+  }
+
+  // สร้าง accessToken แล้วส่งให้ front
+  // ติดตั้ง npm i jsonwebtoken ก่อน
+  const payload = { id: userExist.id, username: userExist.username }
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    algorithm: 'HS256',
+    expiresIn: '7d'
+  })
+  console.log(token)
+  res.json({
+    message : 'Login Successful',
+    accessToken : token
+  })
 }
 
 export function getMe(req, res) {
