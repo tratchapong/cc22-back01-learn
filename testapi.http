@@ -1,9 +1,21 @@
 POST http://localhost:8899/api/auth/register
+Content-Type: application/json
+
+{
+  "username" : "danny",
+  "nickname" : "dan",
+  "password" : "d1234"
+}
 
 
 ###
 POST http://localhost:8899/api/auth/login
+Content-Type: application/json
 
+{
+  "username" : "bobby",
+  "password" : "b1234"
+}
 
 ###
 GET http://localhost:8899/api/aut/me

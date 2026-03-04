@@ -15,11 +15,11 @@ datasource db {
 
 model User {
   id          Int           @id @default(autoincrement())
-  username    String
+  username    String        @unique
   nickname    String?
   password    String
   createdAt   DateTime      @default(now()) @db.Timestamp(0)
-  updatedAt   DateTime      @updatedAt @db.Timestamp(0)
+  updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamp(0)
   // @@map("users")
 }
 
