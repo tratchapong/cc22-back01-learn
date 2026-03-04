@@ -1,10 +1,9 @@
+import {prisma} from '../lib/prisma.js'
 
 export function register(req, res) {
 
-  const myErr = new Error('My Custom Error!!')
-  myErr.status = 444
-  // myErr.message = 'My Custom Error!!'
-  throw(myErr)
+  
+
   res.json('Register service')
 }
 
